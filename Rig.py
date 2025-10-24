@@ -23,3 +23,9 @@ class Rig:
         self.storage.append(Asset("Data Spike", "For use in battles."))
         self.storage.append(Asset("Data Spike", "For use in battles."))
         self.storage.append(Asset("Removable Drive", "Found in rigs and used for extraction."))
+
+def storage_capacity(self) -> int:
+    """Base capacity increases with upgrade level."""
+    base_capacity = 5
+    return base_capacity + (self.upgrade_level * 2)
+
