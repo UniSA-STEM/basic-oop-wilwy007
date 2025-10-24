@@ -193,3 +193,63 @@ def decrypt_asset(self, asset_name: str, location: str = "inventory") -> bool:
     target.decrypt()
     print(f"{self.name}: decrypted {target.name} in {location}.")
     return True
+
+def store_to_rig(self, asset_name: str) -> bool:
+    """Move an item from hacker inventory to rig storage (if rig exists)."""
+    if not self.rig:
+        print(f"{self.name}: no rig to store into.")
+        return False
+    for i, a in enumerate(self._inventory):
+        if a.name == asset_name:
+            if self.rig.store_asset(a):
+                self._inventory.pop(i)
+                self.trace_level += 1
+                print(f"{self.name}: stored {asset_name} into {self.rig.name}.")
+                return True
+            else:
+                return False
+    print(f"{self.name}: no asset named '{asset_name}' in inventory.")
+    return False
+
+def retrieve_from_rig(self, asset_name: str) -> bool:
+    """Get an asset from own rig storage and put it into inventory (refuses encrypted assets)."""
+    if not self.rig:
+        print(f"{self.name}: no rig to retrieve from.")
+        return False
+    asset = self.rig.release_asset(asset_name)
+    if asset is None:
+        return False
+    self._inventory.append(asset)
+    self.trace_level += 1
+    print(f"{self.name}: retrieved {asset.name} from {self.rig.name}.")
+    return True
+
+def store_all_to_rig(self) -> bool:
+    """Attempt to store all items from inventory into rig storage."""
+    if not self.rig:
+        print(f"{self.name}: no rig to store into.")
+        return False
+    moved = False
+    for a in list(self._inventory):
+        if self.rig.store_asset(a):
+            self._inventory.remove(a)
+            moved = True
+    if moved:
+        self.trace_level += 1
+    return moved
+
+def retrieve_all_from_rig(self) -> bool:
+    """Retrieve all non-encrypted assets from rig storage to inventory."""
+    if not self.rig:
+        print(f"{self.name}: no rig to retrieve from.")
+        return False
+    non_encrypted = [a for a in self.rig.storage if not a.encrypted]
+    if not non_encrypted:
+        print(f"{self.name}: no non-encrypted assets to retrieve.")
+        return False
+    for a in non_encrypted:
+        self._inventory.append(a)
+        print(f"{self.name}: retrieved {a.name} from {self.rig.name}.")
+    self.rig.storage = [a for a in self.rig.storage if a.encrypted]
+    self.trace_level += 1
+    return True
