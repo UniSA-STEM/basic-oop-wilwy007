@@ -29,3 +29,17 @@ def storage_capacity(self) -> int:
     base_capacity = 5
     return base_capacity + (self.upgrade_level * 2)
 
+def hits_to_break(self) -> int:
+    """Return the number of hits to break."""
+    return 2 + self.upgrade_level
+
+def take_hit(self):
+    """Rig takes hit from Data Spike and becomes broken if damage reaches threshold"""
+    if self.broken:
+        print(f"{self.name}: Is already broken.")
+        return
+    self.damage += 1
+    print(f"{self.name}: The rig is now at {self.damage} damage.")
+    if self.damage >= self.hits_to_break():
+        self.broken = True
+        print(f"{self.name}: The rig is now broken!")
