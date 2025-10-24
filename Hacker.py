@@ -74,3 +74,66 @@ def upgrade_rig(self) -> bool:
         return False
     return self.rig.repair(consumer_callable=self._consume_by_name)
 
+def can_act(self) -> bool:
+    """Block actions if trace is above threshold."""
+    if self.trace_level > Hacker.trace_threshold:
+        print(f"{self.name}: action blocked — trace too high ({self.trace_level}).")
+        return False
+    return True
+
+def launch_data_spike(self, target_rig: Rig) -> bool:
+    """
+    Launch a Data Spike at target_rig. Requires a Data Spike in this hacker's rig storage.
+    Increases the attacker's trace level by 1.
+    """
+    if not self.can_act():
+        return False
+    if self.rig is None:
+        print(f"{self.name}: no rig to launch from.")
+        return False
+    for i, a in enumerate(self.rig.storage):
+        if a.name == "Data Spike":
+            ds = self.rig.storage.pop(i)
+            print(f"{self.name}: launched {ds.name} at {target_rig.name}.")
+            target_rig.take_hit()
+            self.trace_level += 1
+            return True
+    print(f"{self.name}: no Data Spike available to launch.")
+    return False
+
+def extract_unsecured(self, target_rig: Rig) -> bool:
+    """
+    Extract all non-encrypted assets from a broken target rig.
+    Requires a Removable Drive from hacker inventory or hacker's rig storage.
+    """
+    if not target_rig.broken:
+        print(f"{self.name}: extraction denied — target rig not broken.")
+        return False
+
+    drive = self.scan_inventory_for("Removable Drive")
+    drive_source = "inventory"
+    if drive is None and self.rig:
+        for i, a in enumerate(self.rig.storage):
+            if a.name == "Removable Drive":
+                drive = self.rig.storage.pop(i)
+                drive_source = f"{self.rig.name} storage"
+                break
+
+    if drive is None:
+        print(f"{self.name}: extraction failed — Removable Drive required.")
+        return False
+
+    print(f"{self.name}: used Removable Drive from {drive_source} to extract assets.")
+    extracted_any = False
+    remaining = []
+    for a in target_rig.storage:
+        if a.encrypted:
+            remaining.append(a)
+        else:
+            self._inventory.append(a)
+            print(f"{self.name}: extracted {a.name} from {target_rig.name}.")
+            extracted_any = True
+    target_rig.storage = remaining
+    if not extracted_any:
+        print(f"{self.name}: no unsecured assets found.")
+    return extracted_any
