@@ -253,3 +253,20 @@ def retrieve_all_from_rig(self) -> bool:
     self.rig.storage = [a for a in self.rig.storage if a.encrypted]
     self.trace_level += 1
     return True
+
+def reduce_trace(self, amount: int = 1):
+    """Lower trace level by amount (not below 0)."""
+    before = self.trace_level
+    self.trace_level = max(0, self.trace_level - amount)
+    print(f"{self.name}: trace reduced from {before} to {self.trace_level}.")
+
+def lay_low(self):
+    """
+    Basic way to reduce trace. If a CryptoToken is consumed, reduce more.
+    """
+    if self._consume_by_name("CryptoToken"):
+        self.reduce_trace(3)
+        print(f"{self.name}: used CryptoToken to lay low effectively.")
+    else:
+        self.reduce_trace(1)
+        print(f"{self.name}: lay low reduced trace slightly.")
