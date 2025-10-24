@@ -137,3 +137,59 @@ def extract_unsecured(self, target_rig: Rig) -> bool:
     if not extracted_any:
         print(f"{self.name}: no unsecured assets found.")
     return extracted_any
+
+def encrypt_asset(self, asset_name: str, location: str = "inventory") -> bool:
+    """
+    Encrypt an asset in inventory or rig storage. Requires a Security Chip in inventory (consumed).
+    """
+    if not self._consume_by_name("Security Chip"):
+        print(f"{self.name}: encryption failed — Security Chip required.")
+        return False
+
+    target = None
+    if location == "inventory":
+        for a in self._inventory:
+            if a.name == asset_name:
+                target = a
+                break
+    elif location == "rig" and self.rig:
+        for a in self.rig.storage:
+            if a.name == asset_name:
+                target = a
+                break
+
+    if not target:
+        print(f"{self.name}: encryption failed — {asset_name} not found in {location}.")
+        return False
+
+    target.encrypt()
+    print(f"{self.name}: encrypted {target.name} in {location}.")
+    return True
+
+def decrypt_asset(self, asset_name: str, location: str = "inventory") -> bool:
+    """
+    Decrypt an asset in inventory or rig storage. Requires a Security Chip in inventory (consumed).
+    """
+    if not self._consume_by_name("Security Chip"):
+        print(f"{self.name}: decryption failed — Security Chip required.")
+        return False
+
+    target = None
+    if location == "inventory":
+        for a in self._inventory:
+            if a.name == asset_name:
+                target = a
+                break
+    elif location == "rig" and self.rig:
+        for a in self.rig.storage:
+            if a.name == asset_name:
+                target = a
+                break
+
+    if not target:
+        print(f"{self.name}: decryption failed — {asset_name} not found in {location}.")
+        return False
+
+    target.decrypt()
+    print(f"{self.name}: decrypted {target.name} in {location}.")
+    return True
