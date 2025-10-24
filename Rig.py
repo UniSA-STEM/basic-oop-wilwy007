@@ -43,3 +43,19 @@ def take_hit(self):
     if self.damage >= self.hits_to_break():
         self.broken = True
         print(f"{self.name}: The rig is now broken!")
+
+def repair(self, consumer_callable = None) -> bool:
+    """Repair the Rig. If token is available repair."""
+    if self.damage == 0 and not self.broken:
+        print(f"{self.name}: No repair needed as the rig is not broken.")
+        return False
+
+    if consumer_callable:
+        if not consumer_callable("CryptoToken"):
+            print(f"{self.name}: Repair Failed! CryptoToken is not available.")
+            return False
+
+    self.damage = 0
+    self.broken = False
+    print(f"{self.name}: The rig is repaired and now at {self.damage} damage.")
+    return True
