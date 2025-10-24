@@ -110,3 +110,14 @@ def release_asset(self, asset_name: str) -> Asset or None:
             return self.storage.pop(i)
     print(f"{self.name}: Asset {asset_name} not found.")
     return None
+
+def condition(self) -> str:
+     if self.broken:
+        return f"Broken (Level {self.upgrade_level})"
+     if self.damage == 0:
+         return f"Pristine: (Level {self.upgrade_level})"
+     return (f"Worn: (Level {self.upgrade_level})"
+
+def __str__(self) -> str:
+    stored = ", ".join([f"{a.name}{' [E]' if a.encrypted else ''}" for a in self.storage]) or "None"
+    return f"{self.name} -  {self.condition()} - Upgrade Level {self.upgrade_level} - Storage: [{stored}]"
