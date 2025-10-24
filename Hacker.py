@@ -74,7 +74,7 @@ class Hacker:
             print(f"{self.name}: cannot acquire rig — CryptoToken required.")
             return False
         self.rig = rig if rig else Rig(f"{self.name}'s Rig")
-        print(f"{self.name}: rig '{self.rig.name}' activated.")
+        print(f"{self.name}: Rig '{self.rig.name}' activated.")
         return True
 
     def repair_rig(self) -> bool:
@@ -164,7 +164,7 @@ class Hacker:
         Encrypt an asset in inventory or rig storage. Requires a Security Chip in inventory (consumed).
         """
         if not self._consume_by_name("Security Chip"):
-            print(f"{self.name}: encryption failed — Security Chip required.")
+            print(f"{self.name}: Encryption failed — Security Chip required.")
             return False
 
         target = None
