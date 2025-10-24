@@ -67,3 +67,4 @@ def upgrade(self):
     if self.damage < self.hits_to_break():
         self.broken = False
     print(f"{self.name}: Is now upgraded to level {self.upgrade_level}.")
+
