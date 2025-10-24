@@ -59,3 +59,11 @@ def repair(self, consumer_callable = None) -> bool:
     self.broken = False
     print(f"{self.name}: The rig is repaired and now at {self.damage} damage.")
     return True
+
+def upgrade(self):
+    """Upgrade by applying a Hardware Patch."""
+    self.upgrade_level += 1
+    self.damage = max(0, self.damage - 1)
+    if self.damage < self.hits_to_break():
+        self.broken = False
+    print(f"{self.name}: Is now upgraded to level {self.upgrade_level}.")
