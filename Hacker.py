@@ -52,3 +52,25 @@ def _consume_by_name(self, name: str) -> bool:
         print(f"{self,name}: Consumed {name}.")
         return True
     return False
+
+def acquire_rig(self, rig: Optional[Rig] = None) -> bool:
+    """
+    Acquire a rig by consuming a CryptoToken. If rig parameter is None, a default rig is created.
+    """
+    if self.rig:
+        print(f"{self.name}: already has a rig ({self.rig.name}).")
+        return False
+    if not self._consume_by_name("CryptoToken"):
+        print(f"{self.name}: cannot acquire rig — CryptoToken required.")
+        return False
+    self.rig = rig if rig else Rig(f"{self.name}'s Rig")
+    print(f"{self.name}: rig '{self.rig.name}' activated.")
+    return True
+
+def upgrade_rig(self) -> bool:
+    """Repair the Rig by consuming a CryptoToken"""
+    if not self.rig:
+        print(f"{self.name}: No Rig to repair).")
+        return False
+    return self.rig.repair(consumer_callable=self._consume_by_name)
+
